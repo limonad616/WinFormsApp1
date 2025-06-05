@@ -1,23 +1,15 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Globalization;
 
 namespace WinFormsApp1
 {
-    public class Ball
+    public class Ball(float x, float y, float radius, Random random)
     {
-        public PointF Position;
-        public PointF Velocity;
-        public float Radius { get; set; }
-        private Random? random; // Made nullable to satisfy C# nullability rules
-
-        public Ball(float x, float y, float radius, Random? random = null)
-        {
-            this.Position = new PointF(x, y);
-            this.Velocity = new PointF((float)(random?.NextDouble() * 4 - 2 ?? new Random().NextDouble() * 4 - 2),
-                                      (float)(random?.NextDouble() * 4 - 2 ?? new Random().NextDouble() * 4 - 2));
-            this.Radius = radius;
-            this.random = random ?? new Random(); // Initialize if null
-        }
+        public PointF Position = new(x, y);
+        public PointF Velocity = new((float)(random.NextDouble() * 4 - 2), (float)(random.NextDouble() * 4 - 2));
+        public float Radius { get; set; } = radius;
+        private readonly Random random = random;
 
         public void UpdatePosition(int screenWidth, int screenHeight)
         {
@@ -35,11 +27,11 @@ namespace WinFormsApp1
                 Position.Y = Math.Max(Radius + 50, Math.Min(screenHeight - Radius, Position.Y));
             }
 
-            if (random?.NextDouble() < 0.05 ?? new Random().NextDouble() < 0.05)
+            if (random.NextDouble() < 0.05)
             {
-                Velocity = new PointF(
-                    (float)(random?.NextDouble() * 4 - 2 ?? new Random().NextDouble() * 4 - 2),
-                    (float)(random?.NextDouble() * 4 - 2 ?? new Random().NextDouble() * 4 - 2));
+                Velocity = new(
+                    (float)(random.NextDouble() * 4 - 2),
+                    (float)(random.NextDouble() * 4 - 2));
             }
         }
 
@@ -50,11 +42,9 @@ namespace WinFormsApp1
 
         public string Serialize()
         {
-            string data = string.Format(CultureInfo.InvariantCulture,
+            return string.Format(CultureInfo.InvariantCulture,
                 "{0},{1},{2},{3},{4}",
                 Position.X, Position.Y, Velocity.X, Velocity.Y, Radius);
-            Console.WriteLine($"Serialized Ball: {data}"); // Debug output
-            return data;
         }
     }
 }
